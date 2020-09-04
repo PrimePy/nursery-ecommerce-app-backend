@@ -21,7 +21,7 @@ export const signup = async (req: Request, res: Response)=> {
 export const signin = async (req: Request, res: Response)=> {
 	const user = await User.findOne({
 		email: req.body.email
-	});
+	}, {password: 0});
 	if(!user) return res.status(400).json('Account doesn\'t exist');
 	const correctPassword: boolean = await user.validatePassword(req.body.password);
 	if(!correctPassword) return res.status(400).json('Password wrong');
@@ -32,7 +32,7 @@ export const signin = async (req: Request, res: Response)=> {
 }
 
 export const signout = (req: Request, res: Response) => {
-	res.clearCookie('auth_token').status(200).json('Signout completed');
+	res.clearCookie('auth_token');
 }
 
 

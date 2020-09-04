@@ -8,17 +8,18 @@ interface IPayload{
 }
 
 export const TokenValidation = (req: Request, res: Response, next: NextFunction ) => {
-	console.log(req.cookies);
+
 	const token = req.cookies.auth_token;
 	if(!token) return res.status(401).json('Access Denied');
 
-	try{
-		const payload = jwt.verify(token, process.env.SECRET_KEY || 'TestToken') as IPayload;
-		req.userId = payload._id; 
 
-		next();
-	}catch(error){
-		return res.status(403).json('Token Denied');
-	}
+		jwt.verify(token, process.env.SECRET_KEY || 'TestToken', (err, payload)=> {
+			if(err) return res.status(403).json('Token Denied');
+
+			const payloadInfo = payload as IPayload;
+			req.userId = payloadInfo._id; 
+
+			next();
+		});
 	
 }
